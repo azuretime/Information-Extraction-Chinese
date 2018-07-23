@@ -7,8 +7,10 @@ import datetime
 import os
 import network
 from sklearn.metrics import average_precision_score
+from sys import argv
 
 FLAGS = tf.app.flags.FLAGS
+
 
 
 # embedding the position
