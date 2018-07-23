@@ -214,10 +214,10 @@ def main(_):
             f.close()
             
             
-            while True:
+            #while True:
                 #try:
                     #BUG: Encoding error if user input directly from command line.
-                    line = input('请输入中文句子，格式为 "name1 name2 sentence":')
+                    #line = input('请输入中文句子，格式为 "name1 name2 sentence":')
                     #Read file from test file
                     '''
                     infile = open('test.txt', encoding='utf-8')
@@ -227,115 +227,107 @@ def main(_):
                         break
                     infile.close()
                     '''
-                    en1, en2, sentence = line.strip().split()
-                    print("实体1: " + en1)
-                    print("实体2: " + en2)
-                    print(sentence)
-                    relation = 0
-                    en1pos = sentence.find(en1)
-                    if en1pos == -1:
-                        en1pos = 0
-                    en2pos = sentence.find(en2)
-                    if en2pos == -1:
-                        en2post = 0
-                    output = []
-                    # length of sentence is 70
-                    fixlen = 70
-                    # max length of position embedding is 60 (-60~+60)
-                    maxlen = 60
+            #en1, en2, sentence = line.strip().split()
+            en1, en2, sentence = argv[1],argv[2],argv[3]
+            print("实体1: " + en1)
+            print("实体2: " + en2)
+            print(sentence)
+            relation = 0
+            en1pos = sentence.find(en1)
+            if en1pos == -1:
+                en1pos = 0
+            en2pos = sentence.find(en2)
+            if en2pos == -1:
+                en2post = 0
+            output = []
+            # length of sentence is 70
+            fixlen = 70
+            # max length of position embedding is 60 (-60~+60)
+            maxlen = 60
 
-                    #Encoding test x
-                    for i in range(fixlen):
-                        word = word2id['BLANK']
-                        rel_e1 = pos_embed(i - en1pos)
-                        rel_e2 = pos_embed(i - en2pos)
-                        output.append([word, rel_e1, rel_e2])
+            #Encoding test x
+            for i in range(fixlen):
+                word = word2id['BLANK']
+                rel_e1 = pos_embed(i - en1pos)
+                rel_e2 = pos_embed(i - en2pos)
+                output.append([word, rel_e1, rel_e2])
 
-                    for i in range(min(fixlen, len(sentence))):
-                        
-                        word = 0
-                        if sentence[i] not in word2id:
-                            #print(sentence[i])
-                            #print('==')
-                            word = word2id['UNK']
-                            #print(word)
-                        else:
-                            #print(sentence[i])
-                            #print('||')
-                            word = word2id[sentence[i]]
-                            #print(word)
-                            
-                        output[i][0] = word
-                    test_x = []
-                    test_x.append([output])
-                    
-                    #Encoding test y
-                    label = [0 for i in range(len(relation2id))]
-                    label[0] = 1
-                    test_y = []
-                    test_y.append(label)
-                    
-                    test_x = np.array(test_x)
-                    test_y = np.array(test_y)
-                    
-                    
-                    
-                    
-                    
-                    test_word = []
-                    test_pos1 = []
-                    test_pos2 = []
+            for i in range(min(fixlen, len(sentence))):
 
-                    for i in range(len(test_x)):
-                        word = []
-                        pos1 = []
-                        pos2 = []
-                        for j in test_x[i]:
-                            temp_word = []
-                            temp_pos1 = []
-                            temp_pos2 = []
-                            for k in j:
-                                temp_word.append(k[0])
-                                temp_pos1.append(k[1])
-                                temp_pos2.append(k[2])
-                            word.append(temp_word)
-                            pos1.append(temp_pos1)
-                            pos2.append(temp_pos2)
-                        test_word.append(word)
-                        test_pos1.append(pos1)
-                        test_pos2.append(pos2)
+                word = 0
+                if sentence[i] not in word2id:
+                    #print(sentence[i])
+                    #print('==')
+                    word = word2id['UNK']
+                    #print(word)
+                else:
+                    #print(sentence[i])
+                    #print('||')
+                    word = word2id[sentence[i]]
+                    #print(word)
 
-                    test_word = np.array(test_word)
-                    test_pos1 = np.array(test_pos1)
-                    test_pos2 = np.array(test_pos2)
-                    
-                    #print("test_word Matrix:")
-                    #print(test_word)
-                    #print("test_pos1 Matrix:")
-                    #print(test_pos1)
-                    #print("test_pos2 Matrix:")
-                    #print(test_pos2)
-                    
+                output[i][0] = word
+            test_x = []
+            test_x.append([output])
 
-                    
-                    
-                    prob, accuracy = test_step(test_word, test_pos1, test_pos2, test_y)
-                    prob = np.reshape(np.array(prob), (1, test_settings.num_classes))[0]
-                    print("关系是:")
-                    #print(prob)
-                    top3_id = prob.argsort()[-3:][::-1]
-                    for n, rel_id in enumerate(top3_id):
-                        print("No." + str(n+1) + ": " + id2relation[rel_id] + ", Probability is " + str(prob[rel_id]))
-                #except Exception as e:
-                #    print(e)
-                
-                
-                #result = model.evaluate_line(sess, input_from_line(line, char_to_id), id_to_tag)
-                #print(result)
-            
-    
-    
-    
+            #Encoding test y
+            label = [0 for i in range(len(relation2id))]
+            label[0] = 1
+            test_y = []
+            test_y.append(label)
+
+            test_x = np.array(test_x)
+            test_y = np.array(test_y)
+
+
+
+
+
+            test_word = []
+            test_pos1 = []
+            test_pos2 = []
+
+            for i in range(len(test_x)):
+                word = []
+                pos1 = []
+                pos2 = []
+                for j in test_x[i]:
+                    temp_word = []
+                    temp_pos1 = []
+                    temp_pos2 = []
+                    for k in j:
+                        temp_word.append(k[0])
+                        temp_pos1.append(k[1])
+                        temp_pos2.append(k[2])
+                    word.append(temp_word)
+                    pos1.append(temp_pos1)
+                    pos2.append(temp_pos2)
+                test_word.append(word)
+                test_pos1.append(pos1)
+                test_pos2.append(pos2)
+
+            test_word = np.array(test_word)
+            test_pos1 = np.array(test_pos1)
+            test_pos2 = np.array(test_pos2)
+
+            #print("test_word Matrix:")
+            #print(test_word)
+            #print("test_pos1 Matrix:")
+            #print(test_pos1)
+            #print("test_pos2 Matrix:")
+            #print(test_pos2)
+
+
+
+
+            prob, accuracy = test_step(test_word, test_pos1, test_pos2, test_y)
+            prob = np.reshape(np.array(prob), (1, test_settings.num_classes))[0]
+            print("关系是:")
+            #print(prob)
+            top3_id = prob.argsort()[-3:][::-1]
+            for n, rel_id in enumerate(top3_id):
+                print("No." + str(n+1) + ": " + id2relation[rel_id] + ", Probability is " + str(prob[rel_id]))
+
 
 
 if __name__ == "__main__":
