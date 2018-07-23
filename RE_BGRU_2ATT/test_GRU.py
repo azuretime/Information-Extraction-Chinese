@@ -213,21 +213,7 @@ def main(_):
                 id2relation[int(content[1])] = content[0]
             f.close()
             
-            
-            #while True:
-                #try:
-                    #BUG: Encoding error if user input directly from command line.
-                    #line = input('请输入中文句子，格式为 "name1 name2 sentence":')
-                    #Read file from test file
-                    '''
-                    infile = open('test.txt', encoding='utf-8')
-                    line = ''
-                    for orgline in infile:
-                        line = orgline.strip()
-                        break
-                    infile.close()
-                    '''
-            #en1, en2, sentence = line.strip().split()
+
             en1, en2, sentence = argv[1],argv[2],argv[3]
             print("实体1: " + en1)
             print("实体2: " + en2)
@@ -309,15 +295,6 @@ def main(_):
             test_word = np.array(test_word)
             test_pos1 = np.array(test_pos1)
             test_pos2 = np.array(test_pos2)
-
-            #print("test_word Matrix:")
-            #print(test_word)
-            #print("test_pos1 Matrix:")
-            #print(test_pos1)
-            #print("test_pos2 Matrix:")
-            #print(test_pos2)
-
-
 
 
             prob, accuracy = test_step(test_word, test_pos1, test_pos2, test_y)
