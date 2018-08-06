@@ -105,7 +105,7 @@ class GRU:
 
         # word-level attention layer
         output_h = tf.add(output_forward, output_backward)
-        attention_r = tf.reshape(tf.matmul(tf.reshape(tf.nn.softmax(
+        attention_r = tf.reshape(tf.matmul(tf.reshape(tf.nn.sigmoid(
             tf.reshape(tf.matmul(tf.reshape(tf.tanh(output_h), [total_num * num_steps, gru_size]), attention_w),
                        [total_num, num_steps])), [total_num, 1, num_steps]), output_h), [total_num, gru_size])
 
@@ -116,13 +116,13 @@ class GRU:
             batch_size = self.total_shape[i + 1] - self.total_shape[i]
 
             sen_alpha.append(
-                tf.reshape(tf.nn.softmax(tf.reshape(tf.matmul(tf.multiply(sen_repre[i], sen_a), sen_r), [batch_size])),
+                tf.reshape(tf.nn.sigmoid(tf.reshape(tf.matmul(tf.multiply(sen_repre[i], sen_a), sen_r), [batch_size])),
                            [1, batch_size]))
 
             sen_s.append(tf.reshape(tf.matmul(sen_alpha[i], sen_repre[i]), [gru_size, 1]))
             sen_out.append(tf.add(tf.reshape(tf.matmul(relation_embedding, sen_s[i]), [self.num_classes]), sen_d))
 
-            self.prob.append(tf.nn.softmax(sen_out[i]))
+            self.prob.append(tf.nn.sigmoid(sen_out[i]))
 
             with tf.name_scope("output"):
                 self.predictions.append(tf.argmax(self.prob[i], 0, name="predictions"))
