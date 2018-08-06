@@ -129,7 +129,7 @@ class GRU:
 
             with tf.name_scope("loss"):
                 self.loss.append(
-                    tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=sen_out[i], labels=self.input_y[i])))
+                    tf.reduce_mean(tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(logits=sen_out[i], labels=self.input_y[i]), axis=1)))
                 if i == 0:
                     self.total_loss = self.loss[i]
                 else:
