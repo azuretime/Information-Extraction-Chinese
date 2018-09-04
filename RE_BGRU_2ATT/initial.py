@@ -143,7 +143,8 @@ def init():
             output[i][0] = word
 
         train_sen[tup][label_tag].append(output)
-
+    print('len(train_sen)', len(train_sen))    
+    print('len(train_ans)', len(train_ans)) 
     print('reading test data ...')
 
     test_sen = {}  # {entity pair:[[sentence 1],[sentence 2]...]}
@@ -240,7 +241,9 @@ def init():
         f.write(str(temp) + '\t' + i[0] + '\t' + i[1] + '\t' + tempstr + '\n')
         temp += 1
     f.close()
-
+    
+    print('len train_x',len(train_x))
+    print('len train_y',len(train_y))
     train_x = np.array(train_x)
     train_y = np.array(train_y)
     test_x = np.array(test_x)
